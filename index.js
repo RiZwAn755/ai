@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import blogRouter from '../lib/routes/blogRoute.js';
-import adminRouter from '../lib/routes/adminRoute.js';
+import blogRouter from './lib/routes/blogRoute.js';
+import adminRouter from './lib/routes/adminRoute.js';
 
 const app = express();
 
