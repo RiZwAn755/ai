@@ -26,6 +26,7 @@ import add_icon from './add_icon.png'
 import email_icon from './email_icon.png'
 import upload_area from './upload_area.png'
 
+
 export const assets = {
     facebook_icon,
     googleplus_icon,
