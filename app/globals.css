@@ -1,39 +1,135 @@
+/* ---- Tailwind CSS Core ---- */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.scrollbar-hide::-webkit-scrollbar{
-    display: none;
+/* ---- Google Font ---- */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+/* ---- Global Styles ---- */
+* {
+  font-family: "Outfit", sans-serif;
 }
 
-.scrollbar-hide{
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+html, body {
+  overflow-x: hidden;
 }
 
-.blog-content{
-    padding: 36px 0;
+/* ---- Scrollbar Hide ---- */
+::-webkit-scrollbar {
+  display: none;
 }
 
-.blog-content p{
-    margin-bottom: 10px;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
-.blog-content b{
-    margin-bottom: 10px;
-    font-weight: 500;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-.blog-content h1{
-    margin-bottom: 10px;
-    font-size: 26px;
-    font-weight: 600;
+
+/* ---- Rich Text Formatting ---- */
+.rich-text {
+  font-size: 15px;
 }
-.blog-content h2{
-    margin-bottom: 10px;
-    font-size: 22px;
-    font-weight: 500;
+
+.rich-text p {
+  margin-bottom: 16px;
+  color: #292929;
 }
-.blog-content h3{
-    margin-bottom: 10px;
-    font-size: 18px;
-    font-weight: 500;
+
+.rich-text h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #252525 !important;
+  margin: 32px 0;
+}
+
+.rich-text h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #252525 !important;
+  margin: 24px 0;
+}
+
+.rich-text h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333 !important;
+  margin: 20px 0;
+}
+
+.rich-text h4 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #444444 !important;
+  margin: 16px 0;
+}
+
+.rich-text h5 {
+  font-size: 14px;
+  font-weight: 400;
+  color: #555555 !important;
+  margin: 12px 0;
+}
+
+.rich-text h6 {
+  font-size: 12px;
+  font-weight: 400;
+  color: #666666 !important;
+  margin: 8px 0;
+}
+
+.rich-text strong {
+  font-weight: 700;
+}
+
+.rich-text ol {
+  margin-left: 30px;
+  list-style-type: decimal;
+}
+
+.rich-text ul {
+  margin-left: 30px;
+  list-style-type: disc;
+}
+
+.rich-text li {
+  margin-bottom: 8px;
+}
+
+.rich-text a {
+  color: #007AFF;
+}
+
+/* ---- Blog Content Styling ---- */
+.blog-content {
+  padding: 36px 0;
+}
+
+.blog-content p,
+.blog-content b {
+  margin-bottom: 10px;
+}
+
+.blog-content b {
+  font-weight: 500;
+}
+
+.blog-content h1 {
+  margin-bottom: 10px;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.blog-content h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.blog-content h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 500;
 }
