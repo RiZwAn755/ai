@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import BlogTableItem from '@/Components/AdminComponents/BlogTableItem';
 import { useAppContext } from '@/context/AppContext';
 import toast from 'react-hot-toast';
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL ;
 
 const ListBlog = () => {
 
@@ -11,7 +12,7 @@ const ListBlog = () => {
 
  const fetchBlogs = async () =>{
     try {
-        const {data} = await axios.get('/api/admin/blogs')
+        const {data} = await axios.get(`${baseURL}/api/admin/blogs`)
         if(data.success){
             setBlogs(data.blogs)
         }else{

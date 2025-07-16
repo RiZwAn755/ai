@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import axios from "axios"
 import toast from 'react-hot-toast'
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL; // use this for Next.js
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const AppContext = createContext();
 
@@ -15,7 +15,7 @@ export const AppProvider = ({ children }) => {
 
     const fetchBlogs = async () => {
         try {
-            const { data } = await axios.get('/api/blog/all');
+            const { data } = await axios.get(`${baseURL}/api/blog/all`);
             data.success ? setBlogs(data.blogs) : toast.error(data.message)
         } catch (error) {
             toast.error(error.message)

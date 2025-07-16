@@ -4,13 +4,14 @@ import SubsTableItem from '@/Components/AdminComponents/SubsTableItem'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const Page = () => {
   const [emails, setEmails] = useState([])
 
   const fetchEmails = async () => {
     try {
-      const response = await axios.get('/api/email')
+      const response = await axios.get(`${baseURL}/api/email`)
       setEmails(response.data.emails)
     } catch (error) {
       toast.error('Failed to load subscriptions')

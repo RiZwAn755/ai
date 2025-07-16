@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import parse from 'html-react-parser'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 const Page = () => {
   const { axios } = useAppContext()
@@ -38,11 +39,12 @@ const Page = () => {
 
     try {
       setLoading(true)
-      const { data: result } = await axios.post('/api/blog/generate', {
+      // Call the Express backend endpoint using axios
+      const { data: result } = await axios.post(`${baseUrl}/api/blog/generate`, {
         prompt: data.title,
       })
       if (result.success) {
-        quillRef.current.root.innerHTML = parse(result.content)
+        quillRef.current.root.innerHTML = result.content // Set HTML directly
       } else {
         toast.error(result.message)
       }
@@ -74,7 +76,7 @@ const Page = () => {
     formData.append('image', image)
 
     try {
-      const response = await axios.post('/api/blog', formData)
+      const response = await axios.post(`${baseUrl}/api/blog`, formData)
       if (response.data.success) {
         toast.success(response.data.msg)
         setImage(false)
