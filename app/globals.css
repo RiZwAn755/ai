@@ -11,6 +11,10 @@
   font-family: "Outfit", sans-serif;
 }
 
+@theme {
+  --color-primary: #5044E5; 
+}
+
 html, body {
   overflow-x: hidden;
 }

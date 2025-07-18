@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { comments_data } from '@/Assets/assets'
 import CommentTableItem from '@/Components/AdminComponents/CommentTableItem'
-import { useAppContext } from '@/context/AppContext'
+import { useAppContext } from '@/Context/AppContext'
 import toast from 'react-hot-toast'
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL ;
 

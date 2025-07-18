@@ -1,7 +1,7 @@
 'use client'
 
 import { assets } from '@/Assets/assets'
-import { useAppContext } from '@/context/AppContext'
+import { useAppContext } from '@/Context/AppContext'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -39,14 +39,22 @@ const Page = () => {
 
     try {
       setLoading(true)
-      // Call the Express backend endpoint using axios
-      const { data: result } = await axios.post(`${baseUrl}/api/blog/generate`, {
-        prompt: data.title,
-      })
-      if (result.success) {
-        quillRef.current.root.innerHTML = result.content // Set HTML directly
+      const token = localStorage.getItem('token');
+      // Call the backend endpoint using axios with Authorization header
+      const response = await axios.post(
+        `${baseUrl}/api/blog/generate`,
+        { prompt: data.title },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+      if (response.data.success) {
+        quillRef.current.root.innerHTML = response.data.content // Set HTML directly
       } else {
-        toast.error(result.message)
+        toast.error(response.data.message)
       }
     } catch (error) {
       toast.error(error.message)
@@ -63,7 +71,7 @@ const Page = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault()
-
+  alert("wtf");
     const formData = new FormData()
     formData.append('title', data.title)
     formData.append(
@@ -76,7 +84,7 @@ const Page = () => {
     formData.append('image', image)
 
     try {
-      const response = await axios.post(`${baseUrl}/api/blog`, formData)
+      const response = await axios.post(`${baseUrl}/api/blog/add`, formData)
       if (response.data.success) {
         toast.success(response.data.msg)
         setImage(false)
