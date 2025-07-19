@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import blogRouter from './lib/routes/blogRoute.js';
 import adminRouter from './lib/routes/adminRoute.js';
+import { ConnectDB } from './lib/config/db.js';
 
 const app = express();
+await ConnectDB();
 
 app.use(cors());
 app.use(express.json());

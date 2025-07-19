@@ -8,9 +8,11 @@ import { toast } from 'react-toastify'
 import parse from 'html-react-parser'
 import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
+import { useRouter } from 'next/navigation';
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 const Page = () => {
+  const router = useRouter();
   const { axios } = useAppContext()
   const editorRef = useRef(null)
   const quillRef = useRef(null)
@@ -70,39 +72,37 @@ const Page = () => {
   }
 
   const onSubmitHandler = async (e) => {
-    e.preventDefault()
-  alert("wtf");
-    const formData = new FormData()
-    formData.append('title', data.title)
-    formData.append(
-      'description',
-      quillRef.current.root.innerHTML // fetch from quill
-    )
-    formData.append('category', data.category)
-    formData.append('author', data.author)
-    formData.append('authorImg', data.authorImg)
-    formData.append('image', image)
+    e.preventDefault();
+    console.log("Submitting...");
+
+    if (!data.title || !data.category || !data.author || !image) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('description', quillRef.current.root.innerHTML);
+    formData.append('category', data.category);
+    formData.append('author', data.author);
+    formData.append('authorImg', data.authorImg);
+    formData.append('image', image);
 
     try {
-      const response = await axios.post(`${baseUrl}/api/blog/add`, formData)
+      console.log("Before API call");
+      const response = await axios.post(`${baseUrl}/api/blog/add`, formData);
+      console.log("After API call", response);
       if (response.data.success) {
-        toast.success(response.data.msg)
-        setImage(false)
-        setData({
-          title: '',
-          description: '',
-          category: 'Startup',
-          author: 'Alex Bennett',
-          authorImg: '/author_img.png',
-        })
-        quillRef.current.root.innerHTML = ''
+        toast.success('Blog added successfully!');
+        router.push('/admin/blogList');
+        // reset form...
       } else {
-        toast.error('Something went wrong')
+        toast.error('Something went wrong');
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error?.response?.data?.message || error.message);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-blue-50 py-10 px-4 sm:px-10">

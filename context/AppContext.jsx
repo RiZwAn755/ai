@@ -8,10 +8,36 @@ const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-
     const [token, setToken] = useState(null)
     const [blogs, setBlogs] = useState([])
     const [input, setInput] = useState("")
+    const [mounted, setMounted] = useState(false);
+
+    // Set token from localStorage on mount
+    useEffect(() => {
+        const storedToken = typeof window !== "undefined" ? localStorage.getItem('token') : null;
+        if (storedToken) {
+            setToken(storedToken);
+        }
+        setMounted(true);
+    }, []);
+
+    // Set axios default header whenever token changes
+    useEffect(() => {
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        } else {
+            delete axios.defaults.headers.common['Authorization'];
+        }
+    }, [token]);
+
+    // Fetch blogs only on client after mount
+    useEffect(() => {
+        if (mounted) {
+            fetchBlogs();
+        }
+        // eslint-disable-next-line
+    }, [mounted]);
 
     const fetchBlogs = async () => {
         try {
@@ -22,18 +48,12 @@ export const AppProvider = ({ children }) => {
         }
     }
 
-    useEffect(() => {
-        fetchBlogs();
-        const token = localStorage.getItem('token')
-        if (token) {
-            setToken(token);
-            axios.defaults.headers.common['Authorization'] = `${token}`;
-        }
-    }, [])
-
     const value = {
         axios, token, setToken, blogs, setBlogs, input, setInput
     }
+
+    // Prevent rendering until mounted to avoid hydration mismatch
+    if (!mounted) return null;
 
     return (
         <AppContext.Provider value={value}>
