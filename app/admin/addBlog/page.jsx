@@ -10,8 +10,8 @@ import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 import { useRouter } from 'next/navigation';
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
 const Page = () => {
+const [isPublished, setIsPublished] = useState(false);
   const router = useRouter();
   const { axios } = useAppContext()
   const editorRef = useRef(null)
@@ -87,6 +87,7 @@ const Page = () => {
     formData.append('author', data.author);
     formData.append('authorImg', data.authorImg);
     formData.append('image', image);
+    formData.append('isPublished', isPublished);
 
     try {
       console.log("Before API call");
@@ -174,6 +175,20 @@ const Page = () => {
           <option value="Technology">Technology</option>
           <option value="Lifestyle">Lifestyle</option>
         </select>
+
+{/* Publish Now Checkbox */}
+<div className="flex gap-2 mt-4 items-center">
+  <input
+    type="checkbox"
+    id="publish"
+    checked={isPublished}
+    onChange={e => setIsPublished(e.target.checked)}
+    className="scale-125 cursor-pointer"
+  />
+  <label htmlFor="publish" className="text-gray-700">Publish Now</label>
+</div>
+
+
 
         {/* Submit Button */}
         <button
