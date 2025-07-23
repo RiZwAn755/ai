@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react'
-import { useAppContext } from '@/Context/AppContext'
+import { useAppContext } from '@/context/AppContext'
 import toast from 'react-hot-toast';
 import {useRouter} from 'next/navigation';
 import PrivateComponent from '@/Components/privateComponent';

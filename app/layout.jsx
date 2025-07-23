@@ -1,6 +1,6 @@
 import { Outfit } from 'next/font/google'
 import './globals.css'
-import { AppProvider } from '@/Context/AppContext' // ✅ Import AppProvider
+import { AppProvider } from '@/context/AppContext' // ✅ Import AppProvider
 
 const outfit = Outfit({
   subsets: ['latin'],

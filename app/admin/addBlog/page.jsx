@@ -1,7 +1,7 @@
 'use client'
 
 import { assets } from '@/Assets/assets'
-import { useAppContext } from '@/Context/AppContext'
+import { useAppContext } from '@/context/AppContext'
 import Image from 'next/image'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'

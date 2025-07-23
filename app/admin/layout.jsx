@@ -3,7 +3,7 @@ import Sidebar from "@/Components/AdminComponents/Sidebar";
 import Image from "next/image";
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AppProvider } from "@/Context/AppContext"; // <-- import your provider
+import { AppProvider } from "@/context/AppContext"; // <-- import your provider
 import Navbar from "@/Components/Navbar";
 import PrivateComponent from "@/Components/privateComponent";
 export default function Layout({ children }) {
