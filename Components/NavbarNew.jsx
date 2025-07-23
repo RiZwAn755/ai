@@ -168,7 +168,7 @@ const NavbarNew = () => {
             {/* Logo Section */}
             <div 
               className="flex items-center space-x-3 group cursor-pointer"
-              onClick={() => router.pus('/')}
+              onClick={() => router.push('/')}
             >
               <div className="relative">
                 <img
@@ -218,8 +218,7 @@ const NavbarNew = () => {
                           key={idx}
                           className="group/item block cursor-pointer"
                           onClick={() => {
-                            router.push
-    (item.link);
+                            router.push(item.link);
                           }}
                         >
                           <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-teal-50 hover:to-blue-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
@@ -262,8 +261,7 @@ const NavbarNew = () => {
                         <div
                           key={idx}
                           className="group/item block cursor-pointer"
-                          onClick={() => router.push
-    (item.link)}
+                          onClick={() => router.push(item.link)}
                         >
                           <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-teal-50 hover:to-blue-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
                             <div
@@ -300,8 +298,7 @@ const NavbarNew = () => {
                         <div
                           key={idx}
                           className="group/item block cursor-pointer"
-                          onClick={() => router.push
-    (item.link)}
+                          onClick={() => router.push(item.link)}
                         >
                           <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-teal-50 hover:to-blue-50 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
                             <div
@@ -345,7 +342,7 @@ const NavbarNew = () => {
                 onClick={() => router.push('/login')}  
                 className='flex items-center gap-2 rounded-full text-sm cursor-pointer bg-[#5044E5] text-white px-6 py-2.5 hover:bg-primary-dark transition-all'
               >
-                {token ? 'Dashboard' : 'Login'}
+                Login
                 <img src={assets.arrow} className='w-3' alt="arrow" />
               </button>
             </div>
@@ -417,8 +414,7 @@ const NavbarNew = () => {
                         key={i}
                         className="block py-2 text-sm text-gray-600 hover:text-teal-600 transition-colors duration-200 cursor-pointer"
                         onClick={() => {
-                          router.push
-    (service.link);
+                          router.push(service.link);
                           setMobileMenuOpen(false);
                         }}
                       >
@@ -456,8 +452,7 @@ const NavbarNew = () => {
                         key={i}
                         className="block py-2 text-sm text-gray-600 hover:text-teal-600 transition-colors duration-200 cursor-pointer"
                         onClick={() => {
-                          router.push
-    (solution.link);
+                          router.push(solution.link);
                           setMobileMenuOpen(false);
                         }}
                       >
@@ -491,8 +486,7 @@ const NavbarNew = () => {
                     <div
                       className="block py-2 text-sm text-gray-600 hover:text-teal-600 transition-colors duration-200 cursor-pointer"
                       onClick={() => {
-                        router.push
-("/whitepaper");
+                        router.push("/whitepaper");
                         setMobileMenuOpen(false);
                       }}
                     >
@@ -501,8 +495,7 @@ const NavbarNew = () => {
                     <div
                       className="block py-2 text-sm text-gray-600 hover:text-teal-600 transition-colors duration-200 cursor-pointer"
                       onClick={() => {
-                        router.push
-("/blogs");
+                        router.push("/blogs");
                         setMobileMenuOpen(false);
                       }}
                     >
@@ -544,7 +537,7 @@ const NavbarNew = () => {
                   }}  
                   className='flex items-center justify-center gap-2 w-full rounded-full text-sm cursor-pointer bg-primary text-white px-6 py-3 hover:bg-primary-dark transition-all'
                 >
-                  {token ? 'Dashboard' : 'Login'}
+                  Login
                   <img src={assets.arrow} className='w-3' alt="arrow" />
                 </button>
               </div>
