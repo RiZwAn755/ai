@@ -7,6 +7,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('email');
         router.push('/'); // Redirect to login page
     };
     return (

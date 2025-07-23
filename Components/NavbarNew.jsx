@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react'
 import { assets } from '@/Assets/assets'
-import { useAppContext } from '@/Context/AppContext';
+import { useAppContext } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 const services = [
   {

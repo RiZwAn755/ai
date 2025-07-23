@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useContext, createContext } from 'react'
 import { motion } from "motion/react"
 import axios from 'axios';
-
+import BlogItem from '@/Components/BlogItem';
 // Create context (if you don't have one already)
 const AppContext = createContext();
 
@@ -150,14 +150,10 @@ const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const [input, setInput] = useState(''); // Added search functionality like React version
 
-  const fetchBlogs = async () => {
-    try {
-      const response = await axios.get('/api/blog');
-      setBlogs(response.data.blogs);
-      console.log(response.data.blogs);
-    } catch (error) {
-      console.error('Error fetching blogs:', error);
-    }
+  const fetchBlogs = async () =>{
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/all`);
+    setBlogs(response.data.blogs);
+    console.log(response.data.blogs);
   }
 
   const filteredBlogs = () => {
@@ -209,15 +205,10 @@ const BlogList = () => {
           </div>
         ))}
       </div>
-
-      {/* Blog grid with React styling */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40'>
-        {filteredBlogs()
-          .filter((blog) => menu === "All" ? true : blog.category === menu)
-          .map((blog) => (
-            <BlogCard key={blog._id} blog={blog} />
-          ))
-        }
+      <div className='flex flex-wrap justify-around gap-1 gap-y-10 mb-16 xl:mx-24'>
+        {blogs.filter((item)=> menu==="All"?true:item.category===menu).map((item,index)=>{
+            return <BlogItem key={index} slug={item.slug} image={item.image} title={item.title} description={item.description} category={item.category} />
+        })}
       </div>
     </div>
   )

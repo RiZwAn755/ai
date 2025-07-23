@@ -10,13 +10,13 @@ const cleanImageUrl = (url) => {
   return url.replace(/^[\[\(\s]+|[\]\)\s]+$/g, '');
 }
 
-const BlogItem = ({ title, description, category, image, id }) => {
+const BlogItem = ({ title, description, category, image, slug }) => {
   // Clean the image URL before using it in <Image />
   const safeImage = cleanImageUrl(image);
 
   return (
     <div className='max-w-[330px] sm:max-w-[300px] bg-white border border-black transition-all hover:shadow-[-7px_7px_0px_#000000]'>
-      <Link href={`/blogs/${id}`}>
+      <Link href={`/blogs/${slug}`}>
         <Image
           src={safeImage}
           alt={title || 'Blog Image'}
@@ -32,7 +32,7 @@ const BlogItem = ({ title, description, category, image, id }) => {
           className='mb-3 text-sm tracking-tight text-gray-700'
           dangerouslySetInnerHTML={{ __html: description.slice(0, 120) }}
         ></p>
-        <Link href={`/blogs/${id}`} className='inline-flex items-center py-2 font-semibold text-center'>
+        <Link href={`/blogs/${slug}`} className='inline-flex items-center py-2 font-semibold text-center'>
           Read more
           <Image src={assets.arrow} className='ml-2' alt='' width={12} />
         </Link>

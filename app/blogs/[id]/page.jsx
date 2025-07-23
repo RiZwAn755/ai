@@ -6,24 +6,33 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
-const Page = ({ params }) => {
+const Page = (props) => {
   const [data, setData] = useState(null);
   const [comments, setComments] = useState([]);
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [slug, setSlug] = useState('');
+
+  useEffect(() => {
+    // Unwrap params using React.use
+    (async () => {
+      const params = await props.params;
+      setSlug(params.id);
+    })();
+  }, [props.params]);
 
   // Fetch blog data
   const fetchBlogData = async () => {
-    const response = await axios.get('/api/blog', {
-      params: { id: params.id }
-    });
-    setData(response.data);
+    if (!slug) return;
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/slug/${slug}`);
+    setData(response.data.blog);
   };
 
   // Fetch comments
   const fetchComments = async () => {
-    const res = await axios.post('/api/blog/comments', { blogId: params.id });
+    if (!slug) return;
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/comments`, { blogId: slug });
     if (res.data.success) setComments(res.data.comments);
   };
 
@@ -33,7 +42,7 @@ const Page = ({ params }) => {
     if (!name.trim() || !content.trim()) return;
     setIsSubmitting(true);
     try {
-      const res = await axios.post('/api/blog/add-comment', {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/add-comment`, {
         blog: data._id,
         name,
         content,
@@ -49,10 +58,12 @@ const Page = ({ params }) => {
   };
 
   useEffect(() => {
-    fetchBlogData();
-    fetchComments();
+    if (slug) {
+      fetchBlogData();
+      fetchComments();
+    }
     // eslint-disable-next-line
-  }, []);
+  }, [slug]);
 
   return (data ? (
     <>

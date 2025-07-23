@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { comments_data } from '@/Assets/assets'
 import CommentTableItem from '@/Components/AdminComponents/CommentTableItem'
-import { useAppContext } from '@/Context/AppContext'
+import { useAppContext } from '@/context/AppContext'
 import toast from 'react-hot-toast'
 const baseURL = process.env.NEXT_PUBLIC_BASE_URL ;
 
@@ -15,7 +15,7 @@ const Comments = () => {
 
     const fetchComments = async ()=>{
         try {
-          const { data } = await axios.get(`${baseURL}/api/admin/comments`)
+          const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/comments`)
           data.success ? setComments(data.comments) : toast.error(data.message)
         } catch (error) {
           toast.error(error.message)
