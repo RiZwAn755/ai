@@ -1,44 +1,11 @@
-'use client'
+"use client";
 import { assets } from '@/Assets/assets';
 import Footer from '@/Components/Footer';
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
-
-export async function generateMetadata({ params }) {
-  // Fetch blog data by slug
-  const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/slug/${params.id}`);
-  const blog = res.data.blog;
-
-  if (!blog) {
-    return {
-      title: 'Blog Not Found',
-      description: 'This blog does not exist.',
-    };
-  }
-
-  return {
-    title: blog.title,
-    description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
-    openGraph: {
-      title: blog.title,
-      description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
-      images: [blog.image],
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${blog.slug}`,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: blog.title,
-      description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
-      images: [blog.image],
-    },
-    alternates: {
-      canonical: `/blogs/${blog.slug}`,
-    },
-    slug: blog.slug, // Custom field for debugging or custom use
-  };
-}
+import React, { useEffect, useState, useRef } from 'react';
+import { toast } from 'react-toastify';
 
 const Page = (props) => {
   const [data, setData] = useState(null);
@@ -47,6 +14,10 @@ const Page = (props) => {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [slug, setSlug] = useState('');
+  
+  // Email subscription state variables
+  const [email, setEmail] = useState('');
+  const inputRef = useRef(null);
 
   useEffect(() => {
     // Unwrap params using React.use
@@ -59,15 +30,23 @@ const Page = (props) => {
   // Fetch blog data
   const fetchBlogData = async () => {
     if (!slug) return;
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/slug/${slug}`);
-    setData(response.data.blog);
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/slug/${slug}`);
+      setData(response.data.blog);
+    } catch (error) {
+      console.error('Error fetching blog data:', error);
+    }
   };
 
   // Fetch comments
   const fetchComments = async () => {
     if (!slug) return;
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/comments`, { blogSlug: slug });
-    if (res.data.success) setComments(res.data.comments);
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/comments`, { blogSlug: slug });
+      if (res.data.success) setComments(res.data.comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
   };
 
   // Add comment
@@ -86,8 +65,79 @@ const Page = (props) => {
         setContent('');
         fetchComments();
       }
+    } catch (error) {
+      console.error('Error adding comment:', error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Social share handler with enhanced metadata
+  const handleSocialShare = (platform) => {
+    if (!data) return;
+    
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const url = encodeURIComponent(`${baseUrl}/blogs/${slug}`);
+    const title = encodeURIComponent(data.title);
+    const description = encodeURIComponent(
+      data.description?.replace(/<[^>]+>/g, '').slice(0, 160) || ''
+    );
+
+    let shareUrl = '';
+
+    switch (platform) {
+      case 'facebook':
+        // Enhanced Facebook sharing with quote parameter
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${title}`;
+        break;
+      case 'twitter':
+        // Twitter with hashtags for better discoverability
+        shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}&hashtags=blog,article`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+        break;
+      case 'googleplus':
+        shareUrl = `https://plus.google.com/share?url=${url}`;
+        break;
+      default:
+        return;
+    }
+
+    // Open share dialog in a new window
+    window.open(
+      shareUrl,
+      'share-dialog',
+      'width=600,height=500,resizable=yes,scrollbars=yes'
+    );
+  };
+
+  // Email subscription handler
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("email", email);
+    
+    try {
+      const response = await axios.post('/api/email', formData);
+      if (response.data.success) {
+        toast.success(response.data.msg);
+        setEmail("");
+        if (inputRef.current) {
+          inputRef.current.value = '';
+        }
+      } else {
+        toast.error("Error");
+      }
+    } catch (error) {
+      toast.error("Error occurred while subscribing");
+    }
+  };
+
+  const onClear = () => {
+    setEmail('');
+    if (inputRef.current) {
+      inputRef.current.value = '';
     }
   };
 
@@ -116,9 +166,11 @@ const Page = (props) => {
           <p className='mt-1 pb-2 text-lg max-w-[740px] mx-auto'>{data.author}</p>
         </div>
       </div>
+      
       <div className='mx-5 max-w-[800px] md:mx-auto mt-[-100px] mb-10'>
         <Image className='border-4 border-white' src={data.image} width={800} height={480} alt='' />
         <div className='blog-content' dangerouslySetInnerHTML={{__html:data.description}} />
+        
         {/* Comments Section */}
         <div className="max-w-2xl mx-auto my-16">
           <h2 className="text-2xl font-bold mb-4">Comments ({comments.length})</h2>
@@ -156,19 +208,98 @@ const Page = (props) => {
             </button>
           </form>
         </div>
+
+        {/* Email Subscription Section */}
+        <div className="max-w-2xl mx-auto my-16">
+          <h3 className="text-xl font-semibold mb-4">Subscribe to our newsletter</h3>
+          
+          {/* Email subscription form */}
+          <form 
+            onSubmit={onSubmitHandler} 
+            className='flex justify-between max-w-xl mx-auto border border-gray-200 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 focus-within:shadow-lg focus-within:border-[#5044E5]/50'
+          >
+            <input 
+              ref={inputRef}
+              onChange={(e) => setEmail(e.target.value)} 
+              value={email} 
+              type="email" 
+              placeholder='Enter your email' 
+              required 
+              className='w-full px-5 py-3 outline-none placeholder-gray-400 text-gray-700'
+            />
+            <button 
+              type="submit" 
+              className='bg-gradient-to-r from-[#5044E5] to-[#5044E5] text-white px-6 py-3 font-medium hover:opacity-90 transition-opacity duration-200 flex items-center'
+            >
+              Subscribe
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </button>
+          </form>
+
+          {/* Clear button */}
+          {email && (
+            <div className='mt-4'>
+              <button 
+                onClick={onClear} 
+                className='inline-flex items-center text-sm text-gray-500 hover:text-[#5044E5] transition-colors duration-200'
+              >
+                Clear email
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Share Section */}
         <div className='my-24'>
-          <p className='text-black font font-semibold my-4'>Share this article on social media</p>
-          <div className='flex'>
-            <Image src={assets.facebook_icon} width={50} alt='' />
-            <Image src={assets.twitter_icon} width={50} alt='' />
-            <Image src={assets.googleplus_icon} width={50} alt='' />
+          <p className='text-black font-semibold my-4'>Share this article on social media</p>
+          <div className='flex gap-2'>
+            {/* Facebook Share */}
+            <button
+              onClick={() => handleSocialShare('facebook')}
+              className="hover:opacity-80 transition-opacity cursor-pointer"
+              title="Share on Facebook"
+            >
+              <Image src={assets.facebook_icon} width={50} alt='Share on Facebook' />
+            </button>
+            
+            {/* Twitter Share */}
+            <button
+              onClick={() => handleSocialShare('twitter')}
+              className="hover:opacity-80 transition-opacity cursor-pointer"
+              title="Share on Twitter"
+            >
+              <Image src={assets.twitter_icon} width={50} alt='Share on Twitter' />
+            </button>
+            
+            {/* LinkedIn Share */}
+            <button
+              onClick={() => handleSocialShare('linkedin')}
+              className="hover:opacity-80 transition-opacity cursor-pointer"
+              title="Share on LinkedIn"
+            >
+              <Image src={assets.linkedin_icon} width={50} alt='Share on LinkedIn' />
+            </button>
+            
+            {/* Google Plus Share */}
+            <button
+              onClick={() => handleSocialShare('googleplus')}
+              className="hover:opacity-80 transition-opacity cursor-pointer"
+              title="Share on Google Plus"
+            >
+              <Image src={assets.googleplus_icon} width={50} alt='Share on Google Plus' />
+            </button>
           </div>
         </div>
       </div>
+      
       <Footer />
     </>
-  ) : <></>);
+  ) : <div>Loading...</div>);
 };
 
 export default Page;
