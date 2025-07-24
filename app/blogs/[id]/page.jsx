@@ -6,6 +6,40 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
+export async function generateMetadata({ params }) {
+  // Fetch blog data by slug
+  const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/slug/${params.id}`);
+  const blog = res.data.blog;
+
+  if (!blog) {
+    return {
+      title: 'Blog Not Found',
+      description: 'This blog does not exist.',
+    };
+  }
+
+  return {
+    title: blog.title,
+    description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
+    openGraph: {
+      title: blog.title,
+      description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
+      images: [blog.image],
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${blog.slug}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: blog.title,
+      description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
+      images: [blog.image],
+    },
+    alternates: {
+      canonical: `/blogs/${blog.slug}`,
+    },
+    slug: blog.slug, // Custom field for debugging or custom use
+  };
+}
+
 const Page = (props) => {
   const [data, setData] = useState(null);
   const [comments, setComments] = useState([]);
@@ -32,7 +66,7 @@ const Page = (props) => {
   // Fetch comments
   const fetchComments = async () => {
     if (!slug) return;
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/comments`, { blogId: slug });
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/comments`, { blogSlug: slug });
     if (res.data.success) setComments(res.data.comments);
   };
 
