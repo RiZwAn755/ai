@@ -47,7 +47,6 @@ const Header = () => {
       <div className='py-10 px-5 md:px-12 lg:px-28'>
         <div className='flex justify-between items-center'>
           {/* <Image src={assets.logo} width={180} alt='image' className='w-[130px] sm:w-auto'/> */}
-          <button className='flex items-center gap-2 font-medium py-1 px-3 sm:py-3 sm:px-6 border border-solid border-black shadow-[-7px_7px_0px_#000000]'>Get started </button>
         </div>
 
         <div className='max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 relative pt-32 pb-24'>
