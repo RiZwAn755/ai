@@ -158,11 +158,12 @@ const BlogList = () => {
 
   const filteredBlogs = () => {
     if (input === '') {
-      return blogs;
+      return blogs.filter(blog => blog.isPublished !== false); // Only show published blogs
     }
     return blogs.filter((blog) => 
-      blog.title.toLowerCase().includes(input.toLowerCase()) || 
-      blog.category.toLowerCase().includes(input.toLowerCase())
+      blog.isPublished !== false && // Only show published blogs
+      (blog.title.toLowerCase().includes(input.toLowerCase()) || 
+       blog.category.toLowerCase().includes(input.toLowerCase()))
     );
   }
 
@@ -206,7 +207,7 @@ const BlogList = () => {
         ))}
       </div>
       <div className='flex flex-wrap justify-around gap-1 gap-y-10 mb-16 xl:mx-24'>
-        {blogs.filter((item)=> menu==="All"?true:item.category===menu).map((item,index)=>{
+        {filteredBlogs().filter((item)=> menu==="All"?true:item.category===menu).map((item,index)=>{
             return <BlogItem key={index} slug={item.slug} image={item.image} title={item.title} description={item.description} category={item.category} />
         })}
       </div>

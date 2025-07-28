@@ -13,7 +13,9 @@ export async function generateMetadata({ params }) {
     const apiUrl = `${baseUrl}/api/blog/slug/${params.id}`;
     console.log('Fetching from:', apiUrl);
     
-    const res = await fetch(apiUrl);
+    const res = await fetch(apiUrl, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    });
     
     if (!res.ok) {
       console.error('API response not ok:', res.status, res.statusText);
@@ -28,40 +30,106 @@ export async function generateMetadata({ params }) {
     if (!blog) {
       console.log('No blog found for slug:', params.id);
       return {
-        title: 'Blog Not Found',
-        description: 'This blog does not exist.',
+        title: 'Blog Not Found - AI Blog',
+        description: 'This blog post does not exist or has been removed.',
+        robots: {
+          index: false,
+          follow: false,
+        },
       };
     }
 
     console.log('Generating metadata for blog:', blog.title);
     
+    // Clean description for better SEO
+    const cleanDescription = blog.description
+      ?.replace(/<[^>]+>/g, '') // Remove HTML tags
+      ?.replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      ?.trim()
+      ?.slice(0, 160) || 'Read this insightful article on AI Blog.';
+    
+    const blogUrl = `${baseUrl}/blogs/${blog.slug}`;
+    const publishDate = blog.date || blog.createdAt;
+    const modifiedDate = blog.updatedAt || publishDate;
+    
     const metadata = {
-      title: blog.title,
-      description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
+      title: `${blog.title} - AI Blog`,
+      description: cleanDescription,
+      keywords: [
+        blog.category?.toLowerCase(),
+        'blog',
+        'article',
+        'technology',
+        'startup',
+        'lifestyle',
+        blog.author?.toLowerCase(),
+        ...(blog.title?.toLowerCase().split(' ').slice(0, 5) || [])
+      ].filter(Boolean),
+      authors: [{ name: blog.author || 'Admin' }],
+      creator: blog.author || 'Admin',
+      publisher: 'AI Blog',
+      formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+      },
+      metadataBase: new URL(baseUrl),
+      alternates: {
+        canonical: blogUrl,
+      },
       openGraph: {
         title: blog.title,
-        description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
-        images: [blog.image],
-        url: `${baseUrl}/blogs/${blog.slug}`,
+        description: cleanDescription,
+        url: blogUrl,
+        siteName: 'AI Blog',
+        images: [
+          {
+            url: blog.image,
+            width: 1200,
+            height: 630,
+            alt: blog.title,
+            type: 'image/jpeg',
+          },
+        ],
+        locale: 'en_US',
         type: 'article',
-        publishedTime: blog.createdAt,
-        modifiedTime: blog.updatedAt,
+        publishedTime: publishDate,
+        modifiedTime: modifiedDate,
         authors: [blog.author || 'Admin'],
-        tags: blog.category ? [blog.category] : [],
+        section: blog.category,
+        tags: [blog.category, 'blog', 'article'],
       },
       twitter: {
         card: 'summary_large_image',
         title: blog.title,
-        description: blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
+        description: cleanDescription,
         images: [blog.image],
         creator: '@yourhandle', // Replace with your Twitter handle
+        site: '@yourhandle', // Replace with your Twitter handle
       },
-      alternates: {
-        canonical: `/blogs/${blog.slug}`,
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
-      keywords: blog.category ? [blog.category, 'blog', 'article'] : ['blog', 'article'],
-      authors: [{ name: blog.author || 'Admin' }],
-      slug: blog.slug, // Custom field for debugging or custom use
+      verification: {
+        google: 'your-google-verification-code', // Add your Google verification code
+        yandex: 'your-yandex-verification-code', // Add if needed
+        yahoo: 'your-yahoo-verification-code', // Add if needed
+      },
+      other: {
+        'article:published_time': publishDate,
+        'article:modified_time': modifiedDate,
+        'article:author': blog.author || 'Admin',
+        'article:section': blog.category,
+        'article:tag': blog.category,
+      },
     };
     
     console.log('Generated metadata:', metadata);
@@ -70,8 +138,12 @@ export async function generateMetadata({ params }) {
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {
-      title: 'Blog',
-      description: 'Blog post',
+      title: 'Blog - AI Blog',
+      description: 'Read insightful articles on technology, startups, and lifestyle.',
+      robots: {
+        index: false,
+        follow: true,
+      },
     };
   }
 }
