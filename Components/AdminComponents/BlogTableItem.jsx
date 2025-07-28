@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { EyeIcon, EyeOffIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { EyeIcon, EyeSlashIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { useAppContext } from '@/context/AppContext'
 import toast from 'react-hot-toast'
 
@@ -84,7 +84,7 @@ const BlogTableItem = ({ blog, fetchBlogs, index }) => {
                 onClick={handleUnpublish}
                 title="Unpublish blog"
               >
-                <EyeOffIcon className="w-4 h-4" />
+                <EyeSlashIcon className="w-4 h-4" />
                 Unpublish
               </button>
             ) : (
