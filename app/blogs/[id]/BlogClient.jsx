@@ -274,4 +274,4 @@ const BlogClient = ({ slug }) => {
   ) : <div>Loading...</div>);
 };
 
-export default BlogClient; 
+export default BlogClient;
