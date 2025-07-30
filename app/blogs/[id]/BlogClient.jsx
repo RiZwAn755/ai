@@ -6,6 +6,8 @@ import Link from 'next/link';
 import React, { useEffect, useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import Head from 'next/head';
+import BlogItem from '@/Components/BlogItem';
 
 const BlogClient = ({ slug }) => {
   const [data, setData] = useState(null);
@@ -16,15 +18,71 @@ const BlogClient = ({ slug }) => {
   // Email subscription state variables
   const [email, setEmail] = useState('');
   const inputRef = useRef(null);
+  // Related blogs state
+  const [relatedBlogs, setRelatedBlogs] = useState([]);
+
+  // Generate structured data for SEO
+  const generateStructuredData = (blog) => {
+    if (!blog) return null;
+    
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
+    const blogUrl = `${baseUrl}/blogs/${blog.slug}`;
+    
+    return {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": blog.title,
+      "description": blog.description?.replace(/<[^>]+>/g, '').slice(0, 160),
+      "image": blog.image,
+      "author": {
+        "@type": "Person",
+        "name": blog.author || "Admin"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "AI Blog",
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${baseUrl}/logo.png`
+        }
+      },
+      "datePublished": blog.date || blog.createdAt,
+      "dateModified": blog.updatedAt || blog.date || blog.createdAt,
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": blogUrl
+      },
+      "url": blogUrl,
+      "articleSection": blog.category,
+      "keywords": [blog.category, "blog", "article", "technology", "startup", "lifestyle"],
+      "wordCount": blog.description?.replace(/<[^>]+>/g, '').split(' ').length || 0,
+      "commentCount": comments.length,
+      "comment": comments.map(comment => ({
+        "@type": "Comment",
+        "author": {
+          "@type": "Person",
+          "name": comment.name
+        },
+        "text": comment.content,
+        "dateCreated": comment.createdAt
+      }))
+    };
+  };
 
   // Fetch blog data
   const fetchBlogData = async () => {
     if (!slug) return;
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/slug/${slug}`);
-      setData(response.data.blog);
+      if (response.data.success) {
+        setData(response.data.blog);
+      } else {
+        // Blog not found or unpublished
+        setData(null);
+      }
     } catch (error) {
       console.error('Error fetching blog data:', error);
+      setData(null);
     }
   };
 
@@ -131,8 +189,35 @@ const BlogClient = ({ slug }) => {
     // eslint-disable-next-line
   }, [slug]);
 
+  // Fetch related blogs after main blog is loaded
+  useEffect(() => {
+    if (data && data.category) {
+      const fetchRelated = async () => {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blog/all`);
+          if (response.data.success) {
+            // Filter by same category, exclude current blog, limit to 3
+            const related = response.data.blogs.filter(
+              (b) => b.category === data.category && b.slug !== data.slug && b.isPublished !== false
+            ).slice(0, 3);
+            setRelatedBlogs(related);
+          }
+        } catch (err) {
+          setRelatedBlogs([]);
+        }
+      };
+      fetchRelated();
+    }
+  }, [data]);
+
   return (data ? (
     <>
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(generateStructuredData(data)) }}
+        />
+      </Head>
       <div className='bg-gray-200 py-5 px-5 md:px-12 lg:px-28'>
         <div className='flex justify-between items-center'>
           <Link href='/'>
@@ -268,10 +353,46 @@ const BlogClient = ({ slug }) => {
             </button>
           </div>
         </div>
+        {/* You may also like section */}
+        {relatedBlogs.length > 0 && (
+          <div className="my-24">
+            <h2 className="text-2xl font-bold mb-6 text-center">You may also like</h2>
+            <div className="flex flex-wrap justify-center gap-8">
+              {relatedBlogs.map((blog) => (
+                <div key={blog.slug}>
+                  <BlogItem
+                    title={blog.title}
+                    description={blog.description}
+                    category={blog.category}
+                    image={blog.image}
+                    slug={blog.slug}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <Footer />
     </>
-  ) : <div>Loading...</div>);
+  ) : data === null ? (
+    <div className='min-h-screen flex items-center justify-center bg-gray-50'>
+      <div className='text-center'>
+        <h1 className='text-4xl font-bold text-gray-800 mb-4'>Blog Not Found</h1>
+        <p className='text-gray-600 mb-8'>This blog post doesn't exist or has been unpublished.</p>
+        <Link href='/' className='bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors'>
+          Back to Home
+        </Link>
+      </div>
+    </div>
+  ) : (
+    <div className='min-h-screen flex items-center justify-center bg-gray-50'>
+      <div className='text-center'>
+        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
+        <p className='text-gray-600'>Loading...</p>
+      </div>
+    </div>
+  ));
 };
 
 export default BlogClient;

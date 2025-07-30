@@ -42,7 +42,13 @@ export const AppProvider = ({ children }) => {
     const fetchBlogs = async () => {
         try {
             const { data } = await axios.get(`${baseURL}/api/blog/all`);
-            data.success ? setBlogs(data.blogs) : toast.error(data.message);
+            if (data.success) {
+                // Filter to ensure only published blogs are shown
+                const publishedBlogs = data.blogs.filter(blog => blog.isPublished !== false);
+                setBlogs(publishedBlogs);
+            } else {
+                toast.error(data.message);
+            }
         } catch (error) {
             toast.error(error.message);
         }
