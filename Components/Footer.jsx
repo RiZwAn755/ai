@@ -1,5 +1,6 @@
 import React from 'react';
-
+import Image from "next/image";
+import { assets } from '@/Assets/assets';
 export default function Footer() {
   return (
     <footer className="w-full bg-white border-gray-200">
@@ -7,7 +8,7 @@ export default function Footer() {
         {/* Column 1: Logo + About */}
         <div className="pr-8">
            <div className="flex items-center gap-2 mb-2">
-            <img src="/images/logo.png" alt="Logo" width={20} height={15} className="object-contain" />
+            <Image src={assets.logo} alt="Logo" width={20} height={15} className="object-contain" />
             <h2 className="font-semibold text-base text-gray-800 tracking-tight">QUORE B2B MARKETING</h2>
           </div>
           <div className="flex gap-2">

@@ -2,16 +2,18 @@
 import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Image from "next/image";
+import { assets } from '@/Assets/assets';
 const Header = () => {
   const [email, setEmail] = useState("");
   const inputRef = useRef();
   const [isHovering, setIsHovering] = useState(false);
 
   // Assets would typically be imported differently in React
-  const assets = {
-    logo: '/images/logo.png', // Replace with your actual logo path
-    star_icon: '/images/star.png' // Replace with your actual star icon path
-  };
+  // const assets = {
+  //   logo: '/images/logo.png', // Replace with your actual logo path
+  //   star_icon: '/images/star.png' // Replace with your actual star icon path
+  // };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -52,10 +54,10 @@ const Header = () => {
         <div className='max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16 relative pt-32 pb-24'>
           {/* Header with logo and button */}
           <div className='flex justify-between items-center mb-12'>
-            <img 
-              src={assets.logo} 
-              width={180} 
-              alt='logo' 
+            <Image
+              src={assets.logo}
+              width={180}
+              alt='logo'
               className='w-[130px] sm:w-auto'
             />
             {/* <button className='flex items-center gap-2 font-medium py-1 px-3 sm:py-3 sm:px-6 border border-solid border-black shadow-[-7px_7px_0px_#000000]'>
@@ -142,4 +144,3 @@ const Header = () => {
 };
 
 export default Header;
-

@@ -304,7 +304,7 @@ const BlogList = () => {
                   onClick={() => setMenu(item)}
                   className={`relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                     menu === item 
-                      ? 'text-white shadow-lg' 
+                      ? 'text-[#5044E5] shadow-lg' 
                       : 'text-gray-600 hover:text-[#5044E5] hover:bg-gray-50'
                   }`}
                 >
