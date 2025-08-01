@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { assets } from '@/Assets/assets'
 import { useAppContext } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 const services = [
   {
     name: "Display Advertisement",
@@ -171,7 +172,7 @@ const NavbarNew = () => {
               onClick={() => router.push('/')}
             >
               <div className="relative">
-                <img
+                <Image
                   src={assets.logo}
                   alt="Quore Logo"
                   className="w-32 sm:w-44 group-hover:scale-105 transition-transform duration-300"
@@ -343,7 +344,7 @@ const NavbarNew = () => {
                 className='flex items-center gap-2 rounded-full text-sm cursor-pointer bg-[#5044E5] text-white px-6 py-2.5 hover:bg-primary-dark transition-all'
               >
                 Login
-                <img src={assets.arrow} className='w-3' alt="arrow" />
+                <Image src={assets.arrow} className='w-3' alt="arrow" />
               </button>
             </div>
 
