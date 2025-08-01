@@ -13,17 +13,17 @@ const ListBlog = () => {
     try {
       const token = localStorage.getItem('token'); // or from context
 
-      const { data } = await axios.get(`${baseURL}/api/admin/blogs`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+             const { data } = await axios.get(`${baseURL}/api/admin/blogs?company=QuoreB2B`, {
+         headers: {
+           Authorization: `Bearer ${token}`,
+         },
+       });
       console.log('API response:', data);
       if (data.success) {
         setBlogs(data.blogs);
         console.log('Blogs set:', data.blogs);
       } else {
-        toast.error(data.message);
+        toast.error(data.message || 'Failed to fetch blogs');
       }
     } catch (error) {
       toast.error(error.message);

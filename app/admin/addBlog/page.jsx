@@ -25,6 +25,7 @@ const [isPublished, setIsPublished] = useState(false);
     category: 'Startup',
     author: 'Alex Bennett',
     authorImg: '/author_img.png',
+    company: 'QuoreB2B',
   })
 
   useEffect(() => {
@@ -88,6 +89,7 @@ const [isPublished, setIsPublished] = useState(false);
     formData.append('authorImg', data.authorImg);
     formData.append('image', image);
     formData.append('isPublished', isPublished);
+    formData.append('company', data.company);
 
     try {
       console.log("Before API call");
@@ -174,6 +176,18 @@ const [isPublished, setIsPublished] = useState(false);
           <option value="Startup">Startup</option>
           <option value="Technology">Technology</option>
           <option value="Lifestyle">Lifestyle</option>
+        </select>
+
+        <p className="text-lg font-medium text-gray-700 mt-6">Company</p>
+        <select
+          name="company"
+          onChange={onChangeHandler}
+          value={data.company}
+          className="w-40 mt-2 px-4 py-3 border border-gray-300 rounded-lg text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="QuoreB2B">QuoreB2B</option>
+          <option value="Compare Bazar">Compare Bazar</option>
+          <option value="Other">Other</option>
         </select>
 
 {/* Publish Now Checkbox */}
