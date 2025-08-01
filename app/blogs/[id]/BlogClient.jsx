@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import Head from 'next/head';
 import BlogItem from '@/Components/BlogItem';
+import { motion } from 'framer-motion';
 
 const BlogClient = ({ slug }) => {
   const [data, setData] = useState(null);
@@ -341,7 +342,7 @@ const BlogClient = ({ slug }) => {
               className="hover:opacity-80 transition-opacity cursor-pointer"
               title="Share on LinkedIn"
             >
-              <Image src={assets.linkedin_icon} width={50} alt='Share on LinkedIn' />
+              <Image src={assets.linkedin_icon} width={35} alt='Share on LinkedIn' />
             </button>
             {/* Google Plus Share */}
             <button
@@ -354,24 +355,56 @@ const BlogClient = ({ slug }) => {
           </div>
         </div>
         {/* You may also like section */}
-        {relatedBlogs.length > 0 && (
-          <div className="my-24">
-            <h2 className="text-2xl font-bold mb-6 text-center">You may also like</h2>
-            <div className="flex flex-wrap justify-center gap-8">
-              {relatedBlogs.map((blog) => (
-                <div key={blog.slug}>
-                  <BlogItem
-                    title={blog.title}
-                    description={blog.description}
-                    category={blog.category}
-                    image={blog.image}
-                    slug={blog.slug}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+{relatedBlogs.length > 0 && (
+  <section className="my-24 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+    <h2 className="text-3xl font-extrabold text-center mb-10 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent select-none">
+      You may also like
+    </h2>
+
+    <motion.div
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10"
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: {},
+        visible: {
+          transition: {
+            staggerChildren: 0.15,
+          },
+        },
+      }}
+    >
+      {relatedBlogs.map((blog, index) => (
+        <motion.div
+          key={blog.slug}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { opacity: 1, y: 0 },
+          }}
+          whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+          className="cursor-pointer rounded-3xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl transition-shadow duration-300 bg-white"
+          onClick={() => window.location.href = `/blogs/${blog.slug}`}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') window.location.href = `/blogs/${blog.slug}`;
+          }}
+          role="link"
+          aria-label={`Read blog titled ${blog.title}`}
+        >
+          {/* Assuming BlogItem already styles the card */}
+          <BlogItem
+            title={blog.title}
+            description={blog.description}
+            category={blog.category}
+            image={blog.image}
+            slug={blog.slug}
+          />
+        </motion.div>
+      ))}
+    </motion.div>
+  </section>
+)}
+
       </div>
       <Footer />
     </>
@@ -379,7 +412,7 @@ const BlogClient = ({ slug }) => {
     <div className='min-h-screen flex items-center justify-center bg-gray-50'>
       <div className='text-center'>
         <h1 className='text-4xl font-bold text-gray-800 mb-4'>Blog Not Found</h1>
-        <p className='text-gray-600 mb-8'>This blog post doesn't exist or has been unpublished.</p>
+        <p className='text-gray-600 mb-8'>This blog post does not exist or has been unpublished.</p>
         <Link href='/' className='bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors'>
           Back to Home
         </Link>
@@ -395,4 +428,4 @@ const BlogClient = ({ slug }) => {
   ));
 };
 
-export default BlogClient; 
+export default BlogClient;
