@@ -33,7 +33,22 @@ const [isPublished, setIsPublished] = useState(false);
       quillRef.current = new Quill(editorRef.current, {
         theme: 'snow',
         placeholder: 'Write your blog here...',
+        modules: {
+          toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'image'],
+            ['clean']
+          ]
+        }
       })
+      
+      // Add rich-text class to the editor for proper styling
+      const editorElement = editorRef.current.querySelector('.ql-editor');
+      if (editorElement) {
+        editorElement.classList.add('rich-text');
+      }
     }
   }, [])
 
@@ -55,7 +70,16 @@ const [isPublished, setIsPublished] = useState(false);
       );
       console.log(response);
       if (response.data.success) {
-        quillRef.current.root.innerHTML = response.data.content // Set HTML directly
+        // Set HTML content and ensure proper styling
+        quillRef.current.root.innerHTML = response.data.content;
+        
+        // Add rich-text class to ensure proper styling
+        const editorElement = editorRef.current.querySelector('.ql-editor');
+        if (editorElement && !editorElement.classList.contains('rich-text')) {
+          editorElement.classList.add('rich-text');
+        }
+        
+        toast.success('AI content generated successfully!');
       } else {
         toast.error(response.data.message)
       }

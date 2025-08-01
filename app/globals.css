@@ -137,3 +137,56 @@ html, body {
   font-size: 18px;
   font-weight: 500;
 }
+
+/* ---- Quill Editor Styling ---- */
+.ql-editor.rich-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #292929;
+}
+
+.ql-editor.rich-text h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #252525;
+  margin: 24px 0 16px 0;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 8px;
+}
+
+.ql-editor.rich-text h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+  margin: 20px 0 12px 0;
+}
+
+.ql-editor.rich-text p {
+  margin-bottom: 16px;
+  color: #292929;
+}
+
+.ql-editor.rich-text ul {
+  margin: 16px 0 16px 30px;
+  list-style-type: disc;
+}
+
+.ql-editor.rich-text ol {
+  margin: 16px 0 16px 30px;
+  list-style-type: decimal;
+}
+
+.ql-editor.rich-text li {
+  margin-bottom: 8px;
+  color: #292929;
+}
+
+.ql-editor.rich-text strong {
+  font-weight: 700;
+  color: #252525;
+}
+
+.ql-editor.rich-text em {
+  font-style: italic;
+  color: #555555;
+}
